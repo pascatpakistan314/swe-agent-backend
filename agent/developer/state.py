@@ -26,6 +26,8 @@ def add_messages_with_clear(
 
 class SoftwareDeveloperState(BaseModel):
     # messages: Annotated[list[AnyMessage], add_messages]
+    task_description: Optional[str] = Field(None, description="The task description to be implemented")
+    workspace_dir: Optional[str] = Field("./workspace_repo", description="The workspace directory")
     implementation_plan: Optional[ImplementationPlan] = Field(None, description="The implementation plan to be executed")
     current_task_idx: Optional[int] = Field(0, description="The current task index in the implementation plan")
     current_atomic_task_idx: Optional[int] = Field(0, description="The current atomic task to be implemented")

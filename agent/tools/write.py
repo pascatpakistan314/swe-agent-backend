@@ -1,6 +1,8 @@
 from langchain_core.tools import tool
 import os
 from gitingest import ingest
+import asyncio
+from langchain_core.tools import tool
 
 
 @tool(parse_docstring=True)
@@ -61,8 +63,33 @@ def get_files_structure(directory: str = "./workspace_repo") -> str:
     Returns:
         str: A string representing the hierarchical directory structure and file listing
     """
-    summary, tree, content = ingest(directory)
-    return tree
+    # Handle asyncio conflict when running inside an existing event loop
+    try:
+        # Try to get the current event loop
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # We're inside a running loop, create a fallback
+            import os
+            tree = []
+            for root, dirs, files in os.walk(directory):
+                level = root.replace(directory, '').count(os.sep)
+                indent = ' ' * 2 * level
+                tree.append(f'{indent}{os.path.basename(root)}/')
+                subindent = ' ' * 2 * (level + 1)
+                for file in files:
+                    tree.append(f'{subindent}{file}')
+            return '\n'.join(tree) if tree else "Empty directory"
+        else:
+            # No running loop, use the normal sync version
+            summary, tree, content = ingest(directory)
+            return tree
+    except:
+        # Ultimate fallback
+        import os
+        if os.path.exists(directory):
+            items = os.listdir(directory)
+            return f"Directory contents: {', '.join(items) if items else 'Empty'}"
+        return f"Directory {directory} not found"
 
 
 # List of available tools
