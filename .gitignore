@@ -21,7 +21,6 @@ wheels/
 *.egg
 
 # Pipenv
-.env
 .venv
 env/
 venv/
@@ -75,9 +74,6 @@ coverage.xml
 
 # Misc
 .DS_Store
-.env.local
 workspace_repo/*
-branch_structure.json
-temp_auto_push.bat
-temp_interactive_push.bat
-.gitignore
+config.bat
+node_modules
